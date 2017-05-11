@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "nodemon src/server.js --exec babel-node",
-    "test": "NODE_ENV=test mocha -w --compilers js:babel-register"
+    "test": "NODE_ENV=test mocha test/**/*.js -w --compilers js:babel-register"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
