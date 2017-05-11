@@ -2,18 +2,32 @@
   "name": "nyc-fef-server",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=7.10.0"
+  },
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon src/server.js --exec babel-node",
+    "test": "NODE_ENV=test mocha -w --compilers js:babel-register"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
-    "chai": "^3.5.0",
-    "chai-http": "^3.0.0",
     "debug": "~2.6.3",
     "express": "~4.15.2",
     "knex": "^0.13.0",
-    "mocha": "^3.3.0",
     "morgan": "~1.8.1",
     "pg": "^6.1.5"
+  },
+  "devDependencies": {
+    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-import": "^2.2.0",
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-latest": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "eslint": "^3.19.0",
+    "mocha": "^3.3.0",
+    "nodemon": "^1.11.0"
   }
 }
