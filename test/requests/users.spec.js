@@ -1,12 +1,15 @@
 import chai from 'chai';
 import { expect } from 'chai';
 import chaiHttp from 'chai-http';
+import jwt from 'jsonwebtoken';
 import server from '../../src/server';
 import knex from '../../src/models/knex';
 
 chai.use(chaiHttp);
 
 describe('Users', () => {
+  const token = jwt.sign({username: 'cubadomingo'}, process.env.SECRET);
+
   // set migrations
   beforeEach((done) => {
     knex.migrate.rollback()
@@ -33,6 +36,7 @@ describe('Users', () => {
     it('retrieves a list of all users', (done) => {
       chai.request(server)
       .get('/api/v1/users')
+      .set('x-access-token', token)
       .end((err,  res) => {
         expect(res).to.have.status(200);
         expect(res.body.data.length).to.equal(2);
@@ -52,6 +56,7 @@ describe('Users', () => {
 
       chai.request(server)
       .put('/api/v1/users/1')
+      .set('x-access-token', token)
       .send(params)
       .end((err,  res) => {
         const { username, email } = res.body.data[0];
@@ -70,6 +75,7 @@ describe('Users', () => {
 
       chai.request(server)
       .put('/api/v1/users/1')
+      .set('x-access-token', token)
       .send(params)
       .end((err,  res) => {
         const { username } = res.body.data[0];
@@ -87,6 +93,7 @@ describe('Users', () => {
 
       chai.request(server)
       .put('/api/v1/users/1')
+      .set('x-access-token', token)
       .send(params)
       .end((err,  res) => {
         const { email } = res.body.data[0];
@@ -105,6 +112,7 @@ describe('Users', () => {
 
       chai.request(server)
       .put('/api/v1/users/1')
+      .set('x-access-token', token)
       .send(params)
       .end((err,  res) => {
         const { username, email } = res.body.data[0];
@@ -123,6 +131,7 @@ describe('Users', () => {
 
       chai.request(server)
       .put('/api/v1/users/1')
+      .set('x-access-token', token)
       .send(params)
       .end((err,  res) => {
         expect(res).to.have.status(404);
@@ -138,6 +147,7 @@ describe('Users', () => {
     it('destroys a user', (done) => {
       chai.request(server)
       .delete('/api/v1/users/1')
+      .set('x-access-token', token)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body.message).to.equal('User has been deleted');
@@ -148,6 +158,7 @@ describe('Users', () => {
     it('returns an error if user could not be found', (done) => {
       chai.request(server)
       .delete('/api/v1/users/100')
+      .set('x-access-token', token)
       .end((err, res) => {
         expect(res).to.have.status(404);
         expect(res.body.message).to.equal('User could not be found');
@@ -167,6 +178,7 @@ describe('Users', () => {
 
       chai.request(server)
       .post('/api/v1/users')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(200);
@@ -185,6 +197,7 @@ describe('Users', () => {
 
       chai.request(server)
       .post('/api/v1/users')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -204,6 +217,7 @@ describe('Users', () => {
 
       chai.request(server)
       .post('/api/v1/users')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -223,6 +237,7 @@ describe('Users', () => {
 
       chai.request(server)
       .post('/api/v1/users')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -242,6 +257,7 @@ describe('Users', () => {
 
       chai.request(server)
       .post('/api/v1/users')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -262,6 +278,7 @@ describe('Users', () => {
 
       chai.request(server)
       .post('/api/v1/users')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);

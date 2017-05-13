@@ -2,11 +2,14 @@ import chai from 'chai';
 import { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../src/server';
+import jwt from 'jsonwebtoken';
 import knex from '../../src/models/knex';
 
 chai.use(chaiHttp);
 
 describe('Events', () => {
+  const token = jwt.sign({username: 'cubadomingo'}, process.env.SECRET);
+
   // set migrations and seeds
   beforeEach((done) => {
     knex.migrate.rollback()
@@ -33,6 +36,7 @@ describe('Events', () => {
     it('should return all events', (done) => {
       chai.request(server)
       .get('/api/v1/events')
+      .set('x-access-token', token)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res).to.be.json;
@@ -46,6 +50,7 @@ describe('Events', () => {
     it('should return event with id 1', (done) => {
       chai.request(server)
       .get('/api/v1/events/1')
+      .set('x-access-token', token)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res).to.be.json;
@@ -57,6 +62,7 @@ describe('Events', () => {
     it('should return an error message if event is not found', (done) => {
       chai.request(server)
       .get('/api/v1/events/100')
+      .set('x-access-token', token)
       .end((err, res) => {
         expect(res).to.have.status(404);
         expect(res).to.be.json;
@@ -77,6 +83,7 @@ describe('Events', () => {
 
       chai.request(server)
       .put('/api/v1/events/1')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         const {
@@ -105,6 +112,7 @@ describe('Events', () => {
 
       chai.request(server)
       .put('/api/v1/events/1')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         const {
@@ -133,6 +141,7 @@ describe('Events', () => {
 
       chai.request(server)
       .put('/api/v1/events/1')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -153,6 +162,7 @@ describe('Events', () => {
 
       chai.request(server)
       .post('/api/v1/events')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         const {
@@ -182,6 +192,7 @@ describe('Events', () => {
 
       chai.request(server)
       .post('/api/v1/events')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -196,6 +207,7 @@ describe('Events', () => {
 
       chai.request(server)
       .post('/api/v1/events')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -211,6 +223,7 @@ describe('Events', () => {
 
       chai.request(server)
       .post('/api/v1/events')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -227,6 +240,7 @@ describe('Events', () => {
 
       chai.request(server)
       .post('/api/v1/events')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -244,6 +258,7 @@ describe('Events', () => {
 
       chai.request(server)
       .post('/api/v1/events')
+      .set('x-access-token', token)
       .send(params)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -257,6 +272,7 @@ describe('Events', () => {
     it('should succesfully delete an event', (done) => {
       chai.request(server)
       .delete('/api/v1/events/1')
+      .set('x-access-token', token)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body.message).to.equal('The event has been deleted');
@@ -267,6 +283,7 @@ describe('Events', () => {
     it('should return an error if the event can not be found', (done) => {
       chai.request(server)
       .delete('/api/v1/events/100')
+      .set('x-access-token', token)
       .end((err, res) => {
         expect(res).to.have.status(404);
         expect(res.body.message).to.equal('The event was not found');

@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import eventController from './controllers/event';
 import userController from './controllers/user';
+import authController from './controllers/auth';
 
 dotenv.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(bodyParser.json({ type: 'application/json'}));
 
 app.use(`${namespace}/events`, eventController);
 app.use(`${namespace}/users`, userController);
+app.use(`${namespace}/authenticate`, authController);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');
