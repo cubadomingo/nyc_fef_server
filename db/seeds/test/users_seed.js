@@ -12,7 +12,7 @@ exports.seed = (knex, Promise) => {
   })
   .then(function () {
     return create({
-      username: 'cubadomingo',
+      username: 'cubadomingo650',
       email: 'me@devinosor.io',
       password: 'password',
       password_confirmation: 'password_confirmation',
