@@ -1,8 +1,11 @@
 import express from 'express';
-import eventController from './controllers/event';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+import eventController from './controllers/event';
+import userController from './controllers/user';
 
+dotenv.config();
 const app = express();
 const namespace = '/api/v1';
 
@@ -12,6 +15,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json({ type: 'application/json'}));
 
 app.use(`${namespace}/events`, eventController);
+app.use(`${namespace}/users`, userController);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');
