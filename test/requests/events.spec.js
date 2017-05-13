@@ -23,7 +23,6 @@ describe('Events', () => {
 
   // clear database
   afterEach((done) => {
-    server.close();
     knex.migrate.rollback()
     .then(() => {
       done();
