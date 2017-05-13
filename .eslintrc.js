@@ -4,11 +4,14 @@ module.exports = {
     es6: true,
     node: true,
   },
-  parser: "babel-eslint",
-  plugins: ["node"],
-  extends: ["eslint:recommended", "plugin:node/recommended"],
+  parser: 'babel-eslint',
+  plugins: ['node'],
+  extends: ['eslint:recommended', 'plugin:node/recommended'],
   rules: {
-    "node/no-unsupported-features": 0,
-    "no-unused-vars": ["error", { "argsIgnorePattern": "next" }]
+    'node/no-unsupported-features': 0,
+    'no-unused-vars': ['error', { 'argsIgnorePattern': 'next' }],
+    'quotes': ['error', 'single'],
+    'no-trailing-spaces': 2,
+    'semi': 2,
   }
 };
