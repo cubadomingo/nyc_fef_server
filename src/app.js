@@ -12,7 +12,7 @@ const namespace = '/api/v1';
 
 if (process.env.NODE_ENV !== 'test') { app.use(morgan('dev')); }
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json({ type: 'application/json'}));
 
 app.use(`${namespace}/events`, eventController);
