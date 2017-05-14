@@ -6,9 +6,9 @@ import knex from '../../src/models/knex';
 
 chai.use(chaiHttp);
 
-describe('Authentication', () => {
+describe('Authentication', function() {
   // set migrations and seeds
-  beforeEach((done) => {
+  beforeEach(function(done) {
     knex.migrate.rollback()
     .then(() => {
       knex.migrate.latest()
@@ -22,41 +22,41 @@ describe('Authentication', () => {
   });
 
   // clear database
-  afterEach((done) => {
+  afterEach(function(done) {
     knex.migrate.rollback()
     .then(() => {
       done();
     });
   });
 
-  it('should send a token if the passwords match', (done) => {
+  it('should send a token if the passwords match', function() {
     const params = {
       username: 'cubadomingo',
       password: 'password'
     };
 
-    chai.request(server)
+    return chai.request(server)
     .post('/api/v1/authenticate')
     .send(params)
-    .end((err, res) => {
+    .then((res) => {
+      expect(res).to.have.status(200);
       expect(res.body.success).to.equal(true);
       expect('token' in res.body).to.equal(true);
-      done();
     });
   });
 
-  it('should send an error if password is wrong', (done) => {
+  it('should send an error if password is wrong', function() {
     const params = {
       username: 'cubadomingo',
       password: 'password510'
     };
 
-    chai.request(server)
+    return chai.request(server)
     .post('/api/v1/authenticate')
     .send(params)
-    .end((err, res) => {
-      expect(res.body.message).to.equal('password is not valid');
-      done();
+    .catch((err) => {
+      expect(err).to.have.status(404);
+      expect(err.response.body.message).to.equal('password is not valid');
     });
   });
 });

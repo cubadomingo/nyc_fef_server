@@ -7,11 +7,11 @@ import knex from '../../src/models/knex';
 
 chai.use(chaiHttp);
 
-describe('Users', () => {
+describe('Users', function() {
   const token = jwt.sign({username: 'cubadomingo'}, process.env.SECRET);
 
   // set migrations
-  beforeEach((done) => {
+  beforeEach(function(done) {
     knex.migrate.rollback()
     .then(() => {
       knex.migrate.latest()
@@ -25,28 +25,27 @@ describe('Users', () => {
   });
 
   // clear database
-  afterEach((done) => {
+  afterEach(function(done) {
     knex.migrate.rollback()
     .then(() => {
       done();
     });
   });
 
-  describe('GET /api/v1/users', () => {
-    it('retrieves a list of all users', (done) => {
-      chai.request(server)
+  describe('GET /api/v1/users', function() {
+    it('retrieves a list of all users', function() {
+      return chai.request(server)
       .get('/api/v1/users')
       .set('x-access-token', token)
-      .end((err,  res) => {
+      .then((res) => {
         expect(res).to.have.status(200);
         expect(res.body.data.length).to.equal(2);
-        done();
       });
-    }) ;
+    });
   });
 
-  describe('PUT /api/v1/users', () => {
-    it('succesfully edits a user\'s complete information', (done) => {
+  describe('PUT /api/v1/users', function() {
+    it('succesfully edits a user\'s complete information', function() {
       const params = {
         username: 'cubadomingo650',
         email: 'new@devinosor.io',
@@ -54,121 +53,114 @@ describe('Users', () => {
         password_confirmation: 'newpassword',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .put('/api/v1/users/1')
       .set('x-access-token', token)
       .send(params)
-      .end((err,  res) => {
+      .then((res) => {
         const { username, email } = res.body.data[0];
 
         expect(res).to.have.status(200);
         expect(username).to.equal(params.username);
         expect(email).to.equal(params.email);
-        done();
       });
     });
 
-    it('succesfully edits a user\'s username only', (done) => {
+    it('succesfully edits a user\'s username only', function() {
       const params = {
         username: 'cubadomingo650',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .put('/api/v1/users/1')
       .set('x-access-token', token)
       .send(params)
-      .end((err,  res) => {
+      .then((res) => {
         const { username } = res.body.data[0];
 
         expect(res).to.have.status(200);
         expect(username).to.equal(params.username);
-        done();
       });
     });
 
-    it('succesfully edits a user\'s email only', (done) => {
+    it('succesfully edits a user\'s email only', function() {
       const params = {
         email: 'new@devinosor.io',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .put('/api/v1/users/1')
       .set('x-access-token', token)
       .send(params)
-      .end((err,  res) => {
+      .then((res) => {
         const { email } = res.body.data[0];
 
         expect(res).to.have.status(200);
         expect(email).to.equal(params.email);
-        done();
       });
     });
 
-    it('succesfully edits a user\'s password only', (done) => {
+    it('succesfully edits a user\'s password only', function() {
       const params = {
         password: 'newpassword',
         password_confirmation: 'newpassword',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .put('/api/v1/users/1')
       .set('x-access-token', token)
       .send(params)
-      .end((err,  res) => {
+      .then((res) => {
         const { username, email } = res.body.data[0];
 
         expect(res).to.have.status(200);
         expect(username).to.exist;
         expect(email).to.exist;
-        done();
       });
     });
 
-    it('returns an error if edits password without password_confirmation', (done) => {
+    it('returns an error if edits password without password_confirmation', function () {
       const params = {
         password: 'newpassword',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .put('/api/v1/users/1')
       .set('x-access-token', token)
       .send(params)
-      .end((err,  res) => {
-        expect(res).to.have.status(404);
-        expect(res.body.message).to.equal(
+      .catch((err) => {
+        expect(err).to.have.status(404);
+        expect(err.response.body.message).to.equal(
           'Password_confirmation does not match or is missing'
         );
-        done();
       });
     });
   });
 
-  describe('DELETE /api/v1/users/:id', () => {
-    it('destroys a user', (done) => {
-      chai.request(server)
+  describe('DELETE /api/v1/users/:id', function() {
+    it('destroys a user', function() {
+      return chai.request(server)
       .delete('/api/v1/users/1')
       .set('x-access-token', token)
-      .end((err, res) => {
+      .then((res) => {
         expect(res).to.have.status(200);
         expect(res.body.message).to.equal('User has been deleted');
-        done();
       });
     });
 
-    it('returns an error if user could not be found', (done) => {
-      chai.request(server)
+    it('returns an error if user could not be found', function() {
+      return chai.request(server)
       .delete('/api/v1/users/100')
       .set('x-access-token', token)
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        expect(res.body.message).to.equal('User could not be found');
-        done();
+      .catch((err) => {
+        expect(err).to.have.status(404);
+        expect(err.response.body.message).to.equal('User could not be found');
       });
     });
   });
 
-  describe('POST /api/v1/users', () => {
-    it('creates a new user', (done) => {
+  describe('POST /api/v1/users', function() {
+    it('creates a new user', function() {
       const params = {
         username: 'cubadomingo',
         email: 'me@devinosor.io',
@@ -176,99 +168,94 @@ describe('Users', () => {
         password_confirmation: 'password',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .post('/api/v1/users')
       .set('x-access-token', token)
       .send(params)
-      .end((err, res) => {
+      .then((res) => {
         expect(res).to.have.status(200);
         expect(res.body.data[0].username).to.equal(params.username);
         expect(res.body.data[0].email).to.equal(params.email);
-        done();
       });
     });
 
-    it('returns an error if username is missing', (done) => {
+    it('returns an error if username is missing', function() {
       const params = {
         email: 'me@devinosor.io',
         password: 'password',
         password_confirmation: 'password11',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .post('/api/v1/users')
       .set('x-access-token', token)
       .send(params)
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        expect(res.body.message).to.equal(
+      .catch((err) => {
+        expect(err).to.have.status(404);
+        expect(err.response.body.message).to.equal(
           'Username is required'
         );
-        done();
       });
     });
 
-    it('returns an error if email is missing', (done) => {
+    it('returns an error if email is missing', function() {
       const params = {
         username: 'cubadomingo',
         password: 'password',
         password_confirmation: 'password11',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .post('/api/v1/users')
       .set('x-access-token', token)
       .send(params)
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        expect(res.body.message).to.equal(
+      .catch((err) => {
+        expect(err).to.have.status(404);
+        expect(err.response.body.message).to.equal(
           'Email is required'
         );
-        done();
       });
     });
 
-    it('returns an error if password is missing', (done) => {
+    it('returns an error if password is missing', function() {
       const params = {
         username: 'cubadomingo',
         email: 'me@devinosor.io',
         password_confirmation: 'password11',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .post('/api/v1/users')
       .set('x-access-token', token)
       .send(params)
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        expect(res.body.message).to.equal(
+      .catch((err) => {
+        expect(err).to.have.status(404);
+        expect(err.response.body.message).to.equal(
           'Password is required'
         );
-        done();
       });
     });
 
-    it('returns an error if password_confirmation is missing', (done) => {
+    it('returns an error if password_confirmation is missing', function() {
       const params = {
         username: 'cubadomingo',
         email: 'me@devinosor.io',
         password: 'password',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .post('/api/v1/users')
       .set('x-access-token', token)
       .send(params)
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        expect(res.body.message).to.equal(
+      .catch((err) => {
+        expect(err).to.have.status(404);
+        expect(err.response.body.message).to.equal(
           'Password_confirmation is required'
         );
-        done();
       });
     });
 
-    it('returns an error if password_confirmation is wrong', (done) => {
+    it('returns an error if password_confirmation is wrong', function() {
       const params = {
         username: 'cubadomingo',
         email: 'me@devinosor.io',
@@ -276,16 +263,15 @@ describe('Users', () => {
         password_confirmation: 'password11',
       };
 
-      chai.request(server)
+      return chai.request(server)
       .post('/api/v1/users')
       .set('x-access-token', token)
       .send(params)
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        expect(res.body.message).to.equal(
+      .catch((err) => {
+        expect(err).to.have.status(404);
+        expect(err.response.body.message).to.equal(
           'Password and password_confirmation do not match'
         );
-        done();
       });
     });
   });
