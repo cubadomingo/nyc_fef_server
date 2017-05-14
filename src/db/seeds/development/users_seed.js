@@ -1,6 +1,6 @@
-import { create } from '../../../src/models/users.js';
+import { create } from '../../../models/users.js';
 
-exports.seed = (knex, Promise) => {
+exports.seed = (knex) => {
   return knex('users').del()
   .then(function () {
     return create({

@@ -1,4 +1,4 @@
-exports.seed = (knex, Promise) => {
+exports.seed = (knex) => {
   return knex('events').del()
   .then(function () {
     return knex('events').insert({
