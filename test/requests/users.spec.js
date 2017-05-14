@@ -131,7 +131,27 @@ describe('Users', function() {
       .catch((err) => {
         expect(err).to.have.status(404);
         expect(err.response.body.message).to.equal(
-          'Password_confirmation does not match or is missing'
+          'password_confirmation is required when changing password'
+        );
+      });
+    });
+
+    it('returns an error if password_confirmation does not match with password', function() {
+      const params = {
+        username: 'cubadomingo',
+        email: 'me@devinosor.io',
+        password: 'password',
+        password_confirmation: 'password11',
+      };
+
+      return chai.request(server)
+      .put('/api/v1/users/1')
+      .set('x-access-token', token)
+      .send(params)
+      .catch((err) => {
+        expect(err).to.have.status(404);
+        expect(err.response.body.message).to.equal(
+          'password and password_confirmation do not match'
         );
       });
     });
@@ -144,7 +164,7 @@ describe('Users', function() {
       .set('x-access-token', token)
       .then((res) => {
         expect(res).to.have.status(200);
-        expect(res.body.message).to.equal('User has been deleted');
+        expect(res.body.message).to.equal('user has been deleted');
       });
     });
 
@@ -154,7 +174,7 @@ describe('Users', function() {
       .set('x-access-token', token)
       .catch((err) => {
         expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('User could not be found');
+        expect(err.response.body.message).to.equal('user was not found');
       });
     });
   });
@@ -179,11 +199,8 @@ describe('Users', function() {
       });
     });
 
-    it('returns an error if username is missing', function() {
+    it('returns an error if required params are missing', function() {
       const params = {
-        email: 'me@devinosor.io',
-        password: 'password',
-        password_confirmation: 'password11',
       };
 
       return chai.request(server)
@@ -193,64 +210,7 @@ describe('Users', function() {
       .catch((err) => {
         expect(err).to.have.status(404);
         expect(err.response.body.message).to.equal(
-          'Username is required'
-        );
-      });
-    });
-
-    it('returns an error if email is missing', function() {
-      const params = {
-        username: 'cubadomingo',
-        password: 'password',
-        password_confirmation: 'password11',
-      };
-
-      return chai.request(server)
-      .post('/api/v1/users')
-      .set('x-access-token', token)
-      .send(params)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal(
-          'Email is required'
-        );
-      });
-    });
-
-    it('returns an error if password is missing', function() {
-      const params = {
-        username: 'cubadomingo',
-        email: 'me@devinosor.io',
-        password_confirmation: 'password11',
-      };
-
-      return chai.request(server)
-      .post('/api/v1/users')
-      .set('x-access-token', token)
-      .send(params)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal(
-          'Password is required'
-        );
-      });
-    });
-
-    it('returns an error if password_confirmation is missing', function() {
-      const params = {
-        username: 'cubadomingo',
-        email: 'me@devinosor.io',
-        password: 'password',
-      };
-
-      return chai.request(server)
-      .post('/api/v1/users')
-      .set('x-access-token', token)
-      .send(params)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal(
-          'Password_confirmation is required'
+          'username is required, password is required, password_confirmation is required, email is required'
         );
       });
     });
@@ -270,7 +230,7 @@ describe('Users', function() {
       .catch((err) => {
         expect(err).to.have.status(404);
         expect(err.response.body.message).to.equal(
-          'Password and password_confirmation do not match'
+          'password and password_confirmation do not match'
         );
       });
     });

@@ -48,3 +48,18 @@ export const requiredParams = (params) => {
     next();
   };
 };
+
+export const confirmPassword = function(req, res, next) {
+  if (req.body.password && !req.body.password_confirmation) {
+    const err = new Error('password_confirmation is required when changing password');
+    err.status = 404;
+    next(err);
+  }
+
+  if (req.body.password !== req.body.password_confirmation) {
+    const err = new Error('password and password_confirmation do not match');
+    err.status = 404;
+    next(err);
+  }
+  next();
+};

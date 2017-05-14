@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import jwt from 'jsonwebtoken';
+import {
+  verifyToken,
+  allowedParams,
+  requiredParams,
+  confirmPassword,
+} from './helpers';
 import {
   getAll,
   create,
@@ -8,23 +13,9 @@ import {
 } from '../models/users';
 
 const router = Router();
+const whitelist = ['username', 'password', 'password_confirmation', 'email'];
 
-router.use(function(req, res, next) {
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-  if (token) {
-    jwt.verify(token, process.env.SECRET, (err, decoded) => {
-      if (err) {
-        return res.json({ message: 'Failed to authenticate token.' });
-      } else {
-        req.decoded = decoded;
-        next();
-      }
-    });
-  } else {
-    return res.status(403).json({ message: 'No token provided.' });
-  }
-});
+router.use(verifyToken);
 
 router.get('/', function(req, res, next) {
   getAll()
@@ -38,44 +29,25 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.put('/:id', function(req, res, next) {
-  const whitelist = ['username', 'password', 'password_confirmation', 'email'];
-
-  Object.keys(req.body).map((key) => {
-    if (!whitelist.includes(key)) {
-      return res.status(404).json({
-        message: 'Invalid params'
-      });
-    }
-  });
-
-  if (req.body.password !== req.body.password_confirmation) {
-    return res.status(404).json({
-      message: 'Password_confirmation does not match or is missing'
+router.put('/:id',
+  allowedParams(whitelist),
+  confirmPassword,
+  function(req, res, next) {
+    edit(req.params.id, req.body)
+    .then((user) => {
+      if (user.length > 0) {
+        res.status(200).json({
+          data: user
+        });
+      } else {
+        const err = new Error('user was not found');
+        err.status = 404;
+        next(err);
+      }
+    })
+    .catch((error) => {
+      next(error);
     });
-  }
-
-  if (req.body.password && !req.body.password_confirmation) {
-    return res.status(404).json({
-      message: 'Password_confirmation is needed'
-    });
-  }
-
-  edit(req.params.id, req.body)
-  .then((user) => {
-    if (user.length > 0) {
-      res.status(200).json({
-        data: user
-      });
-    } else {
-      res.status(404).json({
-        message: 'User was not found'
-      });
-    }
-  })
-  .catch((error) => {
-    next(error);
-  });
 });
 
 router.delete('/:id', function(req, res, next) {
@@ -83,12 +55,12 @@ router.delete('/:id', function(req, res, next) {
   .then((row) => {
     if (row > 0) {
       res.status(200).json({
-        message: 'User has been deleted'
+        message: 'user has been deleted'
       });
     } else {
-      res.status(404).json({
-        message: 'User could not be found'
-      });
+      const err = new Error('user was not found');
+      err.status = 404;
+      next(err);
     }
   })
   .catch((error) => {
@@ -96,50 +68,20 @@ router.delete('/:id', function(req, res, next) {
   });
 });
 
-router.post('/', function(req, res, next) {
-  const whitelist = ['username', 'password', 'password_confirmation', 'email'];
-
-  Object.keys(req.body).map((key) => {
-    if (!whitelist.includes(key)) {
-      return res.status(404).json({
-        message: 'Invalid params'
+router.post('/',
+  allowedParams(whitelist),
+  requiredParams(['username','password','password_confirmation','email']),
+  confirmPassword,
+  function(req, res, next) {
+    create(req.body)
+    .then((user) => {
+      res.status(200).json({
+        data: user
       });
-    }
-  });
-
-  if (!req.body.username) {
-    return res.status(404).json({
-      message: 'Username is required'
+    })
+    .catch((error) => {
+      next(error);
     });
-  } else if (!req.body.password) {
-    return res.status(404).json({
-      message: 'Password is required'
-    });
-  } else if (!req.body.password_confirmation) {
-    return res.status(404).json({
-      message: 'Password_confirmation is required'
-    });
-  } else if (!req.body.email) {
-    return res.status(404).json({
-      message: 'Email is required'
-    });
-  }
-
-  if (req.body.password !== req.body.password_confirmation) {
-    return res.status(404).json({
-      message: 'Password and password_confirmation do not match'
-    });
-  }
-
-  create(req.body)
-  .then((user) => {
-    res.status(200).json({
-      data: user
-    });
-  })
-  .catch((error) => {
-    next(error);
-  });
 });
 
 export default router;
