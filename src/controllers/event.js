@@ -1,5 +1,9 @@
 import { Router } from 'express';
-import jwt from 'jsonwebtoken';
+import {
+  verifyToken,
+  allowedParams,
+  requiredParams,
+} from './helpers';
 import {
   getAll,
   getSingle,
@@ -9,23 +13,9 @@ import {
 } from '../models/events';
 
 const router = Router();
+const whitelist = ['title', 'description', 'datetime', 'location'];
 
-router.use(function(req, res, next) {
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-  if (token) {
-    jwt.verify(token, process.env.SECRET, (err, decoded) => {
-      if (err) {
-        return res.json({ message: 'Failed to authenticate token.' });
-      } else {
-        req.decoded = decoded;
-        next();
-      }
-    });
-  } else {
-    return res.status(403).json({ message: 'No token provided.' });
-  }
-});
+router.use(verifyToken);
 
 router.get('/', function(req, res, next) {
   getAll()
@@ -42,13 +32,13 @@ router.get('/', function(req, res, next) {
 router.get('/:id', function(req, res, next) {
   getSingle(req.params.id)
   .then((event) => {
-    if (event.length > 0) {
+    if (event == 0) {
+      const err = new Error('event was not found');
+      err.status = 404;
+      next(err);
+    } else {
       res.status(200).json({
         data: event
-      });
-    } else {
-      res.status(404).json({
-        message: 'The event was not found'
       });
     }
   })
@@ -57,17 +47,7 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
-router.put('/:id', function(req, res, next) {
-  const whitelist = ['title', 'description', 'datetime', 'location'];
-
-  Object.keys(req.body).map((key) => {
-    if (!whitelist.includes(key)) {
-      return res.status(404).json({
-        message: 'Invalid params'
-      });
-    }
-  });
-
+router.put('/:id', allowedParams(whitelist), function(req, res, next) {
   edit(req.params.id, req.body)
   .then((event) => {
     res.status(200).json({
@@ -84,12 +64,13 @@ router.delete('/:id', function(req, res, next) {
   .then((event) => {
     if (event === 1) {
       res.status(200).json({
-        message: 'The event has been deleted'
+        success: true,
+        message: 'event has been deleted'
       });
     } else {
-      res.status(404).json({
-        message: 'The event was not found'
-      });
+      const err = new Error('event was not found');
+      err.status = 404;
+      next(err);
     }
   })
   .catch((error) => {
@@ -97,40 +78,18 @@ router.delete('/:id', function(req, res, next) {
   });
 });
 
-router.post('/', function(req, res, next) {
-  const whitelist = ['title', 'description', 'datetime', 'location'];
-
-  Object.keys(req.body).map((key) => {
-    if (!whitelist.includes(key)) {
-      return res.status(404).json({
-        message: 'Invalid params'
+router.post('/',
+  allowedParams(whitelist),
+  requiredParams(['title', 'description', 'datetime', 'location']),
+  function(req, res, next) {
+    create(req.body)
+    .then((event) => {
+      res.status(200).json({
+        data: event
       });
-    }
-  });
-
-  if (!req.body.title) {
-    return res.status(404).json({
-      message: 'Title is required'
-    });
-  } else if (!req.body.description) {
-    return res.status(404).json({
-      message: 'Description is required'
-    });
-  } else if (!req.body.datetime) {
-    return res.status(404).json({
-      message: 'Datetime is required'
-    });
-  } else if (!req.body.location) {
-    return res.status(404).json({
-      message: 'Location is required'
-    });
-  }
-
-  create(req.body)
-  .then((event) => {
-    res.status(200).json({
-      data: event
-    });
+    })
+    .catch((error) => {
+      next(error);
   });
 });
 

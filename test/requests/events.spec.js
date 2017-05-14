@@ -63,7 +63,7 @@ describe('Events', function() {
       .set('x-access-token', token)
       .catch((err) => {
         expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('The event was not found');
+        expect(err.response.body.message).to.equal('event was not found');
       });
     });
   });
@@ -141,7 +141,7 @@ describe('Events', function() {
       .send(params)
       .catch((err) => {
         expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('Invalid params');
+        expect(err.response.body.message).to.equal('invalid param(s)');
       });
     });
   });
@@ -190,11 +190,11 @@ describe('Events', function() {
       .send(params)
       .catch((err) => {
         expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('Invalid params');
+        expect(err.response.body.message).to.equal('invalid param(s)');
       });
     });
 
-    it('returns an error if title is missing', function() {
+    it('returns errors when required params are missing', function() {
       const params = {
       };
 
@@ -204,55 +204,9 @@ describe('Events', function() {
       .send(params)
       .catch((err) => {
         expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('Title is required');
-      });
-    });
-
-    it('returns an error if description is missing', function() {
-      const params = {
-        title: 'Hello'
-      };
-
-      return chai.request(server)
-      .post('/api/v1/events')
-      .set('x-access-token', token)
-      .send(params)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('Description is required');
-      });
-    });
-
-    it('returns an error if datetime is missing', function() {
-      const params = {
-        title: 'Hello',
-        description: 'Lorem',
-      };
-
-      return chai.request(server)
-      .post('/api/v1/events')
-      .set('x-access-token', token)
-      .send(params)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('Datetime is required');
-      });
-    });
-
-    it('returns an error if location is missing', function() {
-      const params = {
-        title: 'Hello',
-        description: 'Lorem',
-        datetime: '2017-12-05T17:21:00.000Z',
-      };
-
-      return chai.request(server)
-      .post('/api/v1/events')
-      .set('x-access-token', token)
-      .send(params)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('Location is required');
+        expect(err.response.body.message).to.equal(
+          'title is required, description is required, datetime is required, location is required'
+        );
       });
     });
   });
@@ -264,7 +218,7 @@ describe('Events', function() {
       .set('x-access-token', token)
       .then((res) => {
         expect(res).to.have.status(200);
-        expect(res.body.message).to.equal('The event has been deleted');
+        expect(res.body.message).to.equal('event has been deleted');
       });
     });
 
@@ -274,7 +228,7 @@ describe('Events', function() {
       .set('x-access-token', token)
       .catch((err) => {
         expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('The event was not found');
+        expect(err.response.body.message).to.equal('event was not found');
       });
     });
   });
