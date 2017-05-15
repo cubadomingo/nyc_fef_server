@@ -6,8 +6,8 @@ const router = Router();
 router.post('/', (req, res, next) => {
   authenticate(req.body)
   .then((response) => {
-    if (response === 'password is not valid') {
-      const err = new Error(response);
+    if (response instanceof Error) {
+      const err = response;
       err.status = 404;
       next(err);
     } else {
@@ -15,9 +15,6 @@ router.post('/', (req, res, next) => {
         token: response
       });
     }
-  })
-  .catch((error) => {
-    next(error);
   });
 });
 

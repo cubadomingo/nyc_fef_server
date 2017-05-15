@@ -18,19 +18,28 @@ app.use(bodyParser.json({ type: 'application/json'}));
 app.use(`${namespace}/events`, eventController);
 app.use(`${namespace}/users`, userController);
 app.use(`${namespace}/authenticate`, authController);
-
-app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.use('*',function(req,res) {
+  res.status(404).json({
+    message: 'route does not exist'
+  });
 });
 
-app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.json({
-    success: false,
-    message: err.message.split(',').join(', '),
+if (app.get('env') === 'production') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.json({
+        message: err.message.split(',').join(', '),
+        error: err.status
+    });
   });
+}
+
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.json({
+        message: err.message.split(',').join(', '),
+        error: err
+    });
 });
 
 export default app;

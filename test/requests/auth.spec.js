@@ -29,34 +29,52 @@ describe('Authentication', function() {
     });
   });
 
-  it('should send a token if the passwords match', function() {
-    const params = {
-      username: 'cubadomingo',
-      password: 'password'
-    };
+  describe('Request Token', function() {
+    it('returns a token with proper credentials', function() {
+      const params = {
+        username: 'cubadomingo',
+        password: 'password'
+      };
 
-    return chai.request(server)
-    .post('/api/v1/authenticate')
-    .send(params)
-    .then((res) => {
-      expect(res).to.have.status(200);
-      expect('token' in res.body).to.equal(true);
+      return chai.request(server)
+      .post('/api/v1/authenticate')
+      .send(params)
+      .then((res) => {
+        expect(res).to.have.status(200);
+        expect('token' in res.body).to.equal(true);
+      });
     });
-  });
 
-  it('should send an error if password is wrong', function() {
-    const params = {
-      username: 'cubadomingo',
-      password: 'password510'
-    };
+    it('returns an error if password is wrong', function() {
+      const params = {
+        username: 'cubadomingo',
+        password: 'password510'
+      };
 
-    return chai.request(server)
-    .post('/api/v1/authenticate')
-    .send(params)
-    .catch((err) => {
-      expect(err).to.have.status(404);
-      expect('token' in err.response.body).to.equal(false);
-      expect(err.response.body.message).to.equal('password is not valid');
+      return chai.request(server)
+      .post('/api/v1/authenticate')
+      .send(params)
+      .catch((err) => {
+        expect(err).to.have.status(404);
+        expect('token' in err.response.body).to.equal(false);
+        expect(err.response.body.message).to.equal('password is not valid');
+      });
+    });
+
+    it('returns an error if username is wrong', function() {
+      const params = {
+        username: 'cubadomingo5000',
+        password: 'password'
+      };
+
+      return chai.request(server)
+      .post('/api/v1/authenticate')
+      .send(params)
+      .catch((err) => {
+        expect(err).to.have.status(404);
+        expect('token' in err.response.body).to.equal(false);
+        expect(err.response.body.message).to.equal('user does not exist');
+      });
     });
   });
 });

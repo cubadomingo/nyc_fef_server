@@ -23,9 +23,6 @@ router.get('/', function(req, res, next) {
     res.status(200).json({
       data: events
     });
-  })
-  .catch((error) => {
-    next(error);
   });
 });
 
@@ -41,9 +38,6 @@ router.get('/:id', function(req, res, next) {
         data: event
       });
     }
-  })
-  .catch((error) => {
-    next(error);
   });
 });
 
@@ -53,9 +47,6 @@ router.put('/:id', allowedParams(whitelist), function(req, res, next) {
     res.status(200).json({
       data: event
     });
-  })
-  .catch((error) => {
-    next(error);
   });
 });
 
@@ -72,9 +63,6 @@ router.delete('/:id', function(req, res, next) {
       err.status = 404;
       next(err);
     }
-  })
-  .catch((error) => {
-    next(error);
   });
 });
 
@@ -87,10 +75,7 @@ router.post('/',
       res.status(200).json({
         data: event
       });
-    })
-    .catch((error) => {
-      next(error);
-  });
-});
-
+    });
+  }
+);
 export default router;

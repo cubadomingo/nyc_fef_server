@@ -23,15 +23,10 @@ router.get('/', function(req, res, next) {
     res.status(200).json({
       data: users
     });
-  })
-  .catch((error) => {
-    next(error);
   });
 });
 
-router.put('/:id',
-  allowedParams(whitelist),
-  confirmPassword,
+router.put('/:id', [allowedParams(whitelist), confirmPassword],
   function(req, res, next) {
     edit(req.params.id, req.body)
     .then((user) => {
@@ -44,11 +39,9 @@ router.put('/:id',
         err.status = 404;
         next(err);
       }
-    })
-    .catch((error) => {
-      next(error);
     });
-});
+  }
+);
 
 router.delete('/:id', function(req, res, next) {
   destroy(req.params.id)
@@ -62,26 +55,21 @@ router.delete('/:id', function(req, res, next) {
       err.status = 404;
       next(err);
     }
-  })
-  .catch((error) => {
-    next(error);
   });
 });
 
-router.post('/',
-  allowedParams(whitelist),
-  requiredParams(['username','password','password_confirmation','email']),
-  confirmPassword,
-  function(req, res, next) {
+router.post('/', [
+    allowedParams(whitelist),
+    requiredParams(['username','password','password_confirmation','email']),
+    confirmPassword,
+  ], function(req, res, next) {
     create(req.body)
     .then((user) => {
       res.status(200).json({
         data: user
       });
-    })
-    .catch((error) => {
-      next(error);
     });
-});
+  }
+);
 
 export default router;
