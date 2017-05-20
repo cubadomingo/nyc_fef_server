@@ -29,15 +29,13 @@ router.get('/', function(req, res, next) {
 router.get('/:id', function(req, res, next) {
   getSingle(req.params.id)
   .then((event) => {
-    if (event == 0) {
-      const err = new Error('event was not found');
-      err.status = 404;
-      next(err);
-    } else {
-      res.status(200).json({
-        data: event
-      });
-    }
+    res.status(200).json({
+      data: event
+    });
+  })
+  .catch((error) => {
+    error.status = 404;
+    next(error);
   });
 });
 
@@ -47,22 +45,24 @@ router.put('/:id', allowedParams(whitelist), function(req, res, next) {
     res.status(200).json({
       data: event
     });
+  })
+  .catch((error) => {
+    error.status = 404;
+    next(error);
   });
 });
 
 router.delete('/:id', function(req, res, next) {
   destroy(req.params.id)
-  .then((event) => {
-    if (event === 1) {
-      res.status(200).json({
-        success: true,
-        message: 'event has been deleted'
-      });
-    } else {
-      const err = new Error('event was not found');
-      err.status = 404;
-      next(err);
-    }
+  .then(() => {
+    res.status(200).json({
+      success: true,
+      message: 'event has been deleted'
+    });
+  })
+  .catch((error) => {
+    error.status = 404;
+    next(error);
   });
 });
 
@@ -75,6 +75,10 @@ router.post('/',
       res.status(200).json({
         data: event
       });
+    })
+    .catch((error) => {
+      error.status = 404;
+      next(error);
     });
   }
 );

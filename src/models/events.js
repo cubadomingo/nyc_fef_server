@@ -14,7 +14,14 @@ export const getAll = () => {
 
 export const getSingle = (id) => {
   return Events()
-  .where('id', parseInt(id));
+  .where('id', parseInt(id))
+  .then((event) => {
+    if (event == 0) {
+      throw new Error('event not found');
+    } else {
+      return event;
+    }
+  });
 };
 
 export const edit = (id, body) => {
@@ -30,7 +37,14 @@ export const edit = (id, body) => {
     'location',
     'created_at',
     'updated_at'
-  ]);
+  ])
+  .then((event) => {
+    if (event == 0) {
+      throw new Error('event not found');
+    } else {
+      return event;
+    }
+  });
 };
 
 export const create = (body) => {
@@ -49,5 +63,12 @@ export const create = (body) => {
 export const destroy = (id) => {
   return Events()
   .where('id', parseInt(id))
-  .del();
+  .del()
+  .then((event) => {
+    if (event === 1) {
+      return event;
+    } else {
+      throw new Error('event not found');
+    }
+  });
 };
