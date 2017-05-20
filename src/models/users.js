@@ -10,10 +10,10 @@ export const getAll = () => {
 };
 
 export const edit = (id, body) => {
-  if (body.password) {
+  if (!body.password === undefined) {
     return bcrypt.hash(body.password, 10)
     .then((hash) => {
-      return Users()
+      Users()
       .where('id', parseInt(id))
       .update({
         username: body.username,
@@ -26,7 +26,13 @@ export const edit = (id, body) => {
         'email',
         'created_at',
         'updated_at'
-      ]);
+      ])
+      .then((user) => {
+        if (user.length === 0) {
+          throw new Error('user not found');
+        }
+        return user;
+      });
     });
   } else {
     return Users()
@@ -42,7 +48,13 @@ export const edit = (id, body) => {
       'email',
       'created_at',
       'updated_at'
-    ]);
+    ])
+    .then((user) => {
+      if (user.length === 0) {
+        throw new Error('user not found');
+      }
+      return user;
+    });
   }
 };
 

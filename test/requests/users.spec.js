@@ -155,6 +155,26 @@ describe('Users', function() {
         );
       });
     });
+
+    it('returns an error if the user is not found', function() {
+      const params = {
+        username: 'cubadomingo',
+        email: 'me@devinosor.io',
+        password: 'password',
+        password_confirmation: 'password',
+      };
+
+      return chai.request(server)
+      .put('/api/v1/users/1000')
+      .set('x-access-token', token)
+      .send(params)
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal(
+          'user not found'
+        );
+      });
+    });
   });
 
   describe('DELETE /api/v1/users/:id', function() {

@@ -30,15 +30,13 @@ router.put('/:id', [allowedParams(whitelist), confirmPassword],
   function(req, res, next) {
     edit(req.params.id, req.body)
     .then((user) => {
-      if (user.length > 0) {
-        res.status(200).json({
-          data: user
-        });
-      } else {
-        const err = new Error('user was not found');
-        err.status = 404;
-        next(err);
-      }
+      res.status(200).json({
+        data: user
+      });
+    })
+    .catch((error) => {
+      error.status = 404;
+      next(error);
     });
   }
 );
