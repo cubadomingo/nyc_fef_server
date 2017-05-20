@@ -41,9 +41,6 @@ describe('Events', function() {
         expect(res).to.have.status(200);
         expect(res).to.be.json;
         expect(res.body.data.length).to.equal(5);
-      })
-      .catch((err) => {
-        throw err;
       });
     });
   });
@@ -57,9 +54,6 @@ describe('Events', function() {
         expect(res).to.have.status(200);
         expect(res).to.be.json;
         expect(res.body.data[0].title).to.equal('NYSE Visiting Tour');
-      })
-      .catch((err) => {
-        throw err;
       });
     });
 
@@ -68,11 +62,8 @@ describe('Events', function() {
       .get('/api/v1/events/100')
       .set('x-access-token', token)
       .then((res) => {
-        expect(res).to.be.null;
-      })
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('event not found');
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('event not found');
       });
     });
   });
@@ -106,9 +97,6 @@ describe('Events', function() {
         expect(datetime).to.equal(params.datetime);
         expect(location).to.equal(params.location);
         expect(created_at).to.not.equal(updated_at);
-      })
-      .catch((err) => {
-        throw err;
       });
     });
 
@@ -137,9 +125,6 @@ describe('Events', function() {
         expect(location).to.equal(
           '11 Wall Street, New York, NY, United States'
         );
-      })
-      .catch((err) => {
-        throw err;
       });
     });
 
@@ -155,11 +140,8 @@ describe('Events', function() {
       .set('x-access-token', token)
       .send(params)
       .then((res) => {
-        expect(res).to.be.null;
-      })
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('invalid param(s)');
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('invalid param(s)');
       });
     });
 
@@ -176,11 +158,8 @@ describe('Events', function() {
       .set('x-access-token', token)
       .send(params)
       .then((res) => {
-        expect(res).to.be.null;
-      })
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('event not found');
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('event not found');
       });
     });
   });
@@ -213,9 +192,6 @@ describe('Events', function() {
         expect(description).to.equal(params.description);
         expect(datetime).to.equal(params.datetime);
         expect(location).to.equal(params.location);
-      })
-      .catch((err) => {
-        throw err;
       });
     });
 
@@ -231,11 +207,8 @@ describe('Events', function() {
       .set('x-access-token', token)
       .send(params)
       .then((res) => {
-        expect(res).to.be.null;
-      })
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('invalid param(s)');
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('invalid param(s)');
       });
     });
 
@@ -248,11 +221,8 @@ describe('Events', function() {
       .set('x-access-token', token)
       .send(params)
       .then((res) => {
-        expect(res).to.be.null;
-      })
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal(
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal(
           'title is required, description is required, datetime is required, location is required'
         );
       });
@@ -267,9 +237,6 @@ describe('Events', function() {
       .then((res) => {
         expect(res).to.have.status(200);
         expect(res.body.message).to.equal('event has been deleted');
-      })
-      .catch((err) => {
-        throw err;
       });
     });
 
@@ -278,11 +245,8 @@ describe('Events', function() {
       .delete('/api/v1/events/100')
       .set('x-access-token', token)
       .then((res) => {
-        expect(res).to.be.null;
-      })
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('event not found');
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('event not found');
       });
     });
   });

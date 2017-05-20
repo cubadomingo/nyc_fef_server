@@ -128,9 +128,9 @@ describe('Users', function() {
       .put('/api/v1/users/1')
       .set('x-access-token', token)
       .send(params)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal(
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal(
           'password_confirmation is required when changing password'
         );
       });
@@ -148,9 +148,9 @@ describe('Users', function() {
       .put('/api/v1/users/1')
       .set('x-access-token', token)
       .send(params)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal(
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal(
           'password and password_confirmation do not match'
         );
       });
@@ -172,9 +172,9 @@ describe('Users', function() {
       return chai.request(server)
       .delete('/api/v1/users/100')
       .set('x-access-token', token)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal('user was not found');
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('user was not found');
       });
     });
   });
@@ -207,9 +207,9 @@ describe('Users', function() {
       .post('/api/v1/users')
       .set('x-access-token', token)
       .send(params)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal(
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal(
           'username is required, password is required, password_confirmation is required, email is required'
         );
       });
@@ -227,9 +227,9 @@ describe('Users', function() {
       .post('/api/v1/users')
       .set('x-access-token', token)
       .send(params)
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect(err.response.body.message).to.equal(
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal(
           'password and password_confirmation do not match'
         );
       });

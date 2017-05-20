@@ -6,14 +6,18 @@ export const verifyToken = function(req, res, next) {
   if (token) {
     jwt.verify(token, process.env.SECRET, (err, decoded) => {
       if (err) {
-        return res.json({ message: 'Failed to authenticate token.' });
+        const err = new Error('failed to authenticate token');
+        err.status = 404;
+        next(err);
       } else {
         req.decoded = decoded;
         next();
       }
     });
   } else {
-    return res.status(403).json({ message: 'No token provided.' });
+    const err = new Error('no token provided');
+    err.status = 403;
+    next(err);
   }
 };
 

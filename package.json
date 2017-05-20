@@ -29,7 +29,7 @@
     "babel-preset-latest": "^6.24.1",
     "babel-register": "^6.24.1",
     "chai": "^3.5.0",
-    "chai-http": "^3.0.0",
+    "chai-http": "https://github.com/chaijs/chai-http#3ea4524",
     "eslint": "^3.19.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-node": "^4.2.2",

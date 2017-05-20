@@ -42,9 +42,6 @@ describe('Authentication', function() {
       .then((res) => {
         expect(res).to.have.status(200);
         expect('token' in res.body).to.equal(true);
-      })
-      .catch((err) => {
-        throw err;
       });
     });
 
@@ -58,12 +55,9 @@ describe('Authentication', function() {
       .post('/api/v1/authenticate')
       .send(params)
       .then((res) => {
-        expect(res).to.be.null;
-      })
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect('token' in err.response.body).to.equal(false);
-        expect(err.response.body.message).to.equal('username or password is not valid');
+        expect(res).to.have.status(404);
+        expect('token' in res.body).to.equal(false);
+        expect(res.body.message).to.equal('username or password is not valid');
       });
     });
 
@@ -77,12 +71,32 @@ describe('Authentication', function() {
       .post('/api/v1/authenticate')
       .send(params)
       .then((res) => {
-        expect(res).to.be.null;
-      })
-      .catch((err) => {
-        expect(err).to.have.status(404);
-        expect('token' in err.response.body).to.equal(false);
-        expect(err.response.body.message).to.equal('username or password is not valid');
+        expect(res).to.have.status(404);
+        expect('token' in res.body).to.equal(false);
+        expect(res.body.message).to.equal('username or password is not valid');
+      });
+    });
+  });
+
+  describe('Authenticate Token', function() {
+    it('returns an error if token can not be authenticated', function() {
+      const token = 'fakeToken';
+      return chai.request(server)
+      .get('/api/v1/events')
+      .set('x-access-token', token)
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('failed to authenticate token');
+      });
+    });
+
+    it('returns an error if no token is provided', function() {
+      return chai.request(server)
+      .get('/api/v1/events')
+      .set('x-access-token', '')
+      .then((res) => {
+        expect(res).to.have.status(403);
+        expect(res.body.message).to.equal('no token provided');
       });
     });
   });
