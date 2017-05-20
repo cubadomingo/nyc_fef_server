@@ -42,6 +42,9 @@ describe('Authentication', function() {
       .then((res) => {
         expect(res).to.have.status(200);
         expect('token' in res.body).to.equal(true);
+      })
+      .catch((err) => {
+        throw err;
       });
     });
 
@@ -54,6 +57,9 @@ describe('Authentication', function() {
       return chai.request(server)
       .post('/api/v1/authenticate')
       .send(params)
+      .then((res) => {
+        expect(res).to.be.null;
+      })
       .catch((err) => {
         expect(err).to.have.status(404);
         expect('token' in err.response.body).to.equal(false);
@@ -70,6 +76,9 @@ describe('Authentication', function() {
       return chai.request(server)
       .post('/api/v1/authenticate')
       .send(params)
+      .then((res) => {
+        expect(res).to.be.null;
+      })
       .catch((err) => {
         expect(err).to.have.status(404);
         expect('token' in err.response.body).to.equal(false);
