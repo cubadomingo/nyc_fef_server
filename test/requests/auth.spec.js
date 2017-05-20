@@ -57,7 +57,7 @@ describe('Authentication', function() {
       .catch((err) => {
         expect(err).to.have.status(404);
         expect('token' in err.response.body).to.equal(false);
-        expect(err.response.body.message).to.equal('password is not valid');
+        expect(err.response.body.message).to.equal('username or password is not valid');
       });
     });
 
@@ -73,7 +73,7 @@ describe('Authentication', function() {
       .catch((err) => {
         expect(err).to.have.status(404);
         expect('token' in err.response.body).to.equal(false);
-        expect(err.response.body.message).to.equal('user does not exist');
+        expect(err.response.body.message).to.equal('username or password is not valid');
       });
     });
   });

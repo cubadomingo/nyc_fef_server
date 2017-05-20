@@ -6,15 +6,13 @@ const router = Router();
 router.post('/', (req, res, next) => {
   authenticate(req.body)
   .then((response) => {
-    if (response instanceof Error) {
-      const err = response;
-      err.status = 404;
-      next(err);
-    } else {
-      res.status(200).json({
-        token: response
-      });
-    }
+    res.status(200).json({
+      token: response
+    });
+  })
+  .catch((error) => {
+    error.status = 404;
+    next(error);
   });
 });
 
