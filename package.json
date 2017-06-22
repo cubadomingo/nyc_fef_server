@@ -8,9 +8,10 @@
   "scripts": {
     "start": "nodemon src/server.js --exec babel-node",
     "test": "NODE_ENV=test mocha test/**/*.js -w --compilers js:babel-register",
-    "db:migrate:rollback": "babel-node node_modules/.bin/knex migrate:rollback",
-    "db:migrate:latest": "babel-node node_modules/.bin/knex migrate:latest",
-    "db:seed": "babel-node node_modules/.bin/knex seed:run"
+    "make": "knex migrate:make",
+    "rollback": "knex migrate:rollback",
+    "latest": "knex migrate:latest",
+    "seed": "knex seed:run"
   },
   "dependencies": {
     "bcrypt": "^1.0.2",
