@@ -15,23 +15,17 @@ import {
 const router = Router();
 const whitelist = ['title', 'description', 'datetime', 'location'];
 
-router.use(verifyToken);
-
 router.get('/', function(req, res, next) {
   getAll()
   .then((events) => {
-    res.status(200).json({
-      data: events
-    });
+    res.status(200).json({ events });
   });
 });
 
 router.get('/:id', function(req, res, next) {
   getSingle(req.params.id)
   .then((event) => {
-    res.status(200).json({
-      data: event
-    });
+    res.status(200).json({ event });
   })
   .catch((error) => {
     error.status = 404;
@@ -39,12 +33,12 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
+router.use(verifyToken);
+
 router.put('/:id', allowedParams(whitelist), function(req, res, next) {
   edit(req.params.id, req.body)
   .then((event) => {
-    res.status(200).json({
-      data: event
-    });
+    res.status(200).json({ event });
   })
   .catch((error) => {
     error.status = 404;
@@ -72,9 +66,7 @@ router.post('/',
   function(req, res, next) {
     create(req.body)
     .then((event) => {
-      res.status(200).json({
-        data: event
-      });
+      res.status(200).json({ event });
     })
     .catch((error) => {
       error.status = 404;

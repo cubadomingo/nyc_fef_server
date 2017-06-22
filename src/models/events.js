@@ -1,4 +1,5 @@
 import knex from './knex';
+import moment from 'moment';
 
 const Events = () => {
   return knex('events');
@@ -19,6 +20,7 @@ export const getSingle = (id) => {
     if (event == 0) {
       throw new Error('event not found');
     } else {
+      event[0].datetime = moment(event[0].datetime).format('YYYY-MM-DDTHH:mm');
       return event;
     }
   });
