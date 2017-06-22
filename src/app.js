@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import eventController from './controllers/event';
 import userController from './controllers/user';
 import authController from './controllers/auth';
@@ -11,9 +12,9 @@ const app = express();
 const namespace = '/api/v1';
 
 if (process.env.NODE_ENV !== 'test') { app.use(morgan('dev')); }
+app.use(cors());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json({ type: 'application/json'}));
 
 app.use(`${namespace}/events`, eventController);
 app.use(`${namespace}/users`, userController);
