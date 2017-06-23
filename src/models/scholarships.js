@@ -48,3 +48,16 @@ export const edit = (id, body) => {
     }
   });
 };
+
+export const create = (body) => {
+  return Scholarships()
+  .insert(body, [
+    'id',
+    'title',
+    'description',
+    'deadline',
+    'eligibility',
+    'created_at',
+    'updated_at'
+  ]);
+};

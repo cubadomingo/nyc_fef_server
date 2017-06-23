@@ -164,4 +164,69 @@ describe('Scholarships', function() {
       });
     });
   });
+
+  describe('POST /api/v1/scholarships', function() {
+    it('should create a new scholarship', function() {
+      const params = {
+        title: 'Sample Title',
+        description: 'Lorem Ipsum',
+        deadline: '2017-12-05T17:21:00.000Z',
+        eligibility: 'freshman only',
+      };
+
+      return chai.request(server)
+      .post('/api/v1/scholarships')
+      .set('x-access-token', token)
+      .send(params)
+      .then((res) => {
+        const {
+          id,
+          title,
+          description,
+          deadline,
+          eligibility,
+        } = res.body.scholarship[0];
+
+        expect(res).to.have.status(200);
+        expect(id).to.equal(6);
+        expect(title).to.equal(params.title);
+        expect(description).to.equal(params.description);
+        expect(deadline).to.equal(params.deadline);
+        expect(eligibility).to.equal(params.eligibility);
+      });
+    });
+
+    it('returns an error when there is an invalid params', function() {
+      const params = {
+        title: 'Hello',
+        description: 'Lorem',
+        invalid: 'yooo',
+      };
+
+      return chai.request(server)
+      .post('/api/v1/scholarships')
+      .set('x-access-token', token)
+      .send(params)
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('invalid param(s)');
+      });
+    });
+
+    it('returns errors when required params are missing', function() {
+      const params = {
+      };
+
+      return chai.request(server)
+      .post('/api/v1/scholarships')
+      .set('x-access-token', token)
+      .send(params)
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal(
+          'title is required, description is required, deadline is required, eligibility is required'
+        );
+      });
+    });
+  });
 });

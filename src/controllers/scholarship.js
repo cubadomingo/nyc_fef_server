@@ -2,11 +2,13 @@ import { Router } from 'express';
 import {
   verifyToken,
   allowedParams,
+  requiredParams,
 } from './helpers';
 import {
   getAll,
   getSingle,
   edit,
+  create,
 } from '../models/scholarships';
 
 const router = Router();
@@ -42,5 +44,20 @@ router.put('/:id', allowedParams(whitelist), function(req, res, next) {
     next(error);
   });
 });
+
+router.post('/',
+  allowedParams(whitelist),
+  requiredParams(whitelist),
+  function(req, res, next) {
+    create(req.body)
+    .then((scholarship) => {
+      res.status(200).json({ scholarship });
+    })
+    .catch((error) => {
+      error.status = 404;
+      next(error);
+    });
+  }
+);
 
 export default router;
