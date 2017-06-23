@@ -2,11 +2,13 @@ import chai from 'chai';
 import { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../src/server';
+import jwt from 'jsonwebtoken';
 import knex from '../../src/models/knex';
 
 chai.use(chaiHttp);
 
 describe('Scholarships', function() {
+  const token = jwt.sign({username: 'cubadomingo'}, process.env.SECRET);
 
   // set migrations and seeds
   beforeEach(function(done) {
@@ -59,6 +61,103 @@ describe('Scholarships', function() {
     function() {
       return chai.request(server)
       .get('/api/v1/scholarships/100')
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('scholarship not found');
+      });
+    });
+  });
+
+  describe('PUT /api/v1/scholarships/:id', function() {
+     it('should succesfully edit scholarships and update created_at',
+     function() {
+      const params = {
+        title: 'Sample Title',
+        description: 'Lorem Ipsum',
+        deadline: '2017-12-05T17:21:00.000Z',
+        eligibility: 'Freshman only',
+      };
+
+      return chai.request(server)
+      .put('/api/v1/scholarships/1')
+      .set('x-access-token', token)
+      .send(params)
+      .then((res) => {
+        const {
+          title,
+          description,
+          deadline,
+          eligibility,
+          created_at,
+          updated_at,
+        } = res.body.scholarship[0];
+
+        expect(res).to.have.status(200);
+        expect(title).to.equal(params.title);
+        expect(description).to.equal(params.description);
+        expect(deadline).to.equal(params.deadline);
+        expect(eligibility).to.equal(params.eligibility);
+        expect(created_at).to.not.equal(updated_at);
+      });
+    });
+
+    it('should succesfully edit scholarship with atleast one param', function() {
+      const params = {
+        title: 'Sample Title',
+        description: 'Lorem Ipsum',
+      };
+
+      return chai.request(server)
+      .put('/api/v1/scholarships/1')
+      .set('x-access-token', token)
+      .send(params)
+      .then((res) => {
+        const {
+          title,
+          description,
+          deadline,
+          eligibility,
+        } = res.body.scholarship[0];
+
+        expect(res).to.have.status(200);
+        expect(title).to.equal(params.title);
+        expect(description).to.equal(params.description);
+        expect(deadline).to.equal('2017-12-06T01:30:00.000Z');
+        expect(eligibility).to.equal(
+          'Must be a freshman, sophomore, or junior'
+        );
+      });
+    });
+
+    it('should return an error when params are invalid', function() {
+      const params = {
+        title: 'Sample Title',
+        description: 'Lorem Ipsum',
+        hello: 'what a lovely day',
+      };
+
+      return chai.request(server)
+      .put('/api/v1/scholarships/1')
+      .set('x-access-token', token)
+      .send(params)
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('invalid param(s)');
+      });
+    });
+
+    it('should return an error if the scholarship is not found', function() {
+      const params = {
+        title: 'Sample Title',
+        description: 'Lorem Ipsum',
+        deadline: '2017-12-05T17:21:00.000Z',
+        eligibility: 'Sophomores',
+      };
+
+      return chai.request(server)
+      .put('/api/v1/scholarships/1000')
+      .set('x-access-token', token)
+      .send(params)
       .then((res) => {
         expect(res).to.have.status(404);
         expect(res.body.message).to.equal('scholarship not found');

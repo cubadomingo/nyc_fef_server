@@ -25,3 +25,26 @@ export const getSingle = (id) => {
     }
   });
 };
+
+export const edit = (id, body) => {
+  body['updated_at'] = new Date();
+
+  return Scholarships()
+  .where('id', parseInt(id))
+  .update(body, [
+    'id',
+    'title',
+    'description',
+    'deadline',
+    'eligibility',
+    'created_at',
+    'updated_at'
+  ])
+  .then((scholarship) => {
+    if (scholarship == 0) {
+      throw new Error('scholarship not found');
+    } else {
+      return scholarship;
+    }
+  });
+};
