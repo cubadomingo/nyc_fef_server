@@ -40,7 +40,7 @@ describe('Events', function() {
       .then((res) => {
         expect(res).to.have.status(200);
         expect(res).to.be.json;
-        expect(res.body.data.length).to.equal(5);
+        expect(res.body.events.length).to.equal(5);
       });
     });
   });
@@ -53,7 +53,7 @@ describe('Events', function() {
       .then((res) => {
         expect(res).to.have.status(200);
         expect(res).to.be.json;
-        expect(res.body.data[0].title).to.equal('NYSE Visiting Tour');
+        expect(res.body.event[0].title).to.equal('NYSE Visiting Tour');
       });
     });
 
@@ -89,7 +89,7 @@ describe('Events', function() {
           location,
           created_at,
           updated_at,
-        } = res.body.data[0];
+        } = res.body.event[0];
 
         expect(res).to.have.status(200);
         expect(title).to.equal(params.title);
@@ -116,7 +116,7 @@ describe('Events', function() {
           description,
           datetime,
           location,
-        } = res.body.data[0];
+        } = res.body.event[0];
 
         expect(res).to.have.status(200);
         expect(title).to.equal(params.title);
@@ -184,7 +184,7 @@ describe('Events', function() {
           description,
           datetime,
           location,
-        } = res.body.data[0];
+        } = res.body.event[0];
 
         expect(res).to.have.status(200);
         expect(id).to.equal(6);
