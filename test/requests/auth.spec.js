@@ -82,7 +82,7 @@ describe('Authentication', function() {
     it('returns an error if token can not be authenticated', function() {
       const token = 'fakeToken';
       return chai.request(server)
-      .get('/api/v1/events')
+      .delete('/api/v1/events/1')
       .set('x-access-token', token)
       .then((res) => {
         expect(res).to.have.status(404);
@@ -92,7 +92,7 @@ describe('Authentication', function() {
 
     it('returns an error if no token is provided', function() {
       return chai.request(server)
-      .get('/api/v1/events')
+      .delete('/api/v1/events/1')
       .set('x-access-token', '')
       .then((res) => {
         expect(res).to.have.status(403);
