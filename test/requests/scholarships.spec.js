@@ -41,4 +41,28 @@ describe('Scholarships', function() {
       });
     });
   });
+
+  describe('GET /api/v1/scholarships/:id', function() {
+    it('should return scholarship with id 1', function() {
+      return chai.request(server)
+      .get('/api/v1/scholarships/1')
+      .then((res) => {
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body.scholarship[0].title).to.equal(
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+        );
+      });
+    });
+
+    it('should return an error message if scholarship is not found',
+    function() {
+      return chai.request(server)
+      .get('/api/v1/scholarships/100')
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('scholarship not found');
+      });
+    });
+  });
 });
