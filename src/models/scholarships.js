@@ -61,3 +61,16 @@ export const create = (body) => {
     'updated_at'
   ]);
 };
+
+export const destroy = (id) => {
+  return Scholarships()
+  .where('id', parseInt(id))
+  .del()
+  .then((scholarship) => {
+    if (scholarship === 1) {
+      return scholarship;
+    } else {
+      throw new Error('scholarship not found');
+    }
+  });
+};

@@ -9,6 +9,7 @@ import {
   getSingle,
   edit,
   create,
+  destroy,
 } from '../models/scholarships';
 
 const router = Router();
@@ -59,5 +60,19 @@ router.post('/',
     });
   }
 );
+
+router.delete('/:id', function(req, res, next) {
+  destroy(req.params.id)
+  .then(() => {
+    res.status(200).json({
+      success: true,
+      message: 'scholarship has been deleted'
+    });
+  })
+  .catch((error) => {
+    error.status = 404;
+    next(error);
+  });
+});
 
 export default router;

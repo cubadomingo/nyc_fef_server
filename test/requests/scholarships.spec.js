@@ -229,4 +229,27 @@ describe('Scholarships', function() {
       });
     });
   });
+
+  describe('DELETE /api/v1/scholarships/:id', function() {
+    it('should succesfully delete an scholarship', function() {
+      return chai.request(server)
+      .delete('/api/v1/scholarships/1')
+      .set('x-access-token', token)
+      .then((res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.equal('scholarship has been deleted');
+      });
+    });
+
+    it('should return an error if the scholarship can not be found',
+    function() {
+      return chai.request(server)
+      .delete('/api/v1/scholarships/100')
+      .set('x-access-token', token)
+      .then((res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.message).to.equal('scholarship not found');
+      });
+    });
+  });
 });
