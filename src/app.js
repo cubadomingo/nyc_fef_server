@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import scholarshipsController from './controllers/scholarship';
 import eventController from './controllers/event';
 import userController from './controllers/user';
 import authController from './controllers/auth';
@@ -17,6 +18,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 app.use(`${namespace}/events`, eventController);
+app.use(`${namespace}/scholarships`, scholarshipsController);
 app.use(`${namespace}/users`, userController);
 app.use(`${namespace}/authenticate`, authController);
 app.use('*',function(req,res) {
